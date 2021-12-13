@@ -50,9 +50,6 @@ class _MyAppState extends State<MyApp> {
           primaryColor: Colors.lightBlue[800]),
       routes: {'/add-guide': (context) => const AddArticle()},
       home: Scaffold(
-          //appBar: AppBar(
-          //  title: const Text('@DIY'),
-          // ),
           body: SingleChildScrollView(
         child: Builder(
           builder: (context) => Center(
@@ -62,10 +59,10 @@ class _MyAppState extends State<MyApp> {
                   padding: EdgeInsets.fromLTRB(0, 40, 0, 25),
                   child: Text("@DIY\nJournal. Repair. Share.",
                       style: TextStyle(
-                          fontSize: 26, color: Colors.white, height: 1.2),
+                          fontSize: 26, color: Colors.white, height: 1.4),
                       textAlign: TextAlign.center)),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.grey),
+                style: ElevatedButton.styleFrom(primary: Colors.grey[850]),
                 onPressed: () async {
                   var preference = await futurePreference;
                   setState(() {
@@ -87,7 +84,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 },
                 child: const Text('Onboard an @sign',
-                    style: TextStyle(color: Colors.black)),
+                    style: TextStyle(color: Colors.white)),
               ),
               Padding(
                   padding: const EdgeInsets.only(top: 20.0),
@@ -107,32 +104,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-// //* The next screen after onboarding (second screen)
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     /// Get the AtClientManager instance
-//     var atClientManager = AtClientManager.getInstance();
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Dashboard'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           children: [
-//             const Text(
-//                 'Successfully onboarded and navigated to FirstAppScreen'),
-
-//             /// Use the AtClientManager instance to get the current atsign
-//             Text(
-//                 'Current @sign: ${atClientManager.atClient.getCurrentAtSign()}'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

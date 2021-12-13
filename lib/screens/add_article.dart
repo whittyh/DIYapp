@@ -108,15 +108,21 @@ class _AddArticleState extends State<AddArticle> {
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text('Add Article'),
         actions: [
           Switch(
-              value: isArticlePrivate,
-              onChanged: (bool val) {
-                setState(() {
-                  isArticlePrivate = val;
-                });
-              })
+            value: isArticlePrivate,
+            onChanged: (bool val) {
+              setState(() {
+                isArticlePrivate = val;
+              });
+            },
+            activeColor: Colors.white,
+            activeTrackColor: Colors.grey[500],
+            inactiveThumbColor: Colors.lightBlue,
+            inactiveTrackColor: Colors.blue[100],
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -158,6 +164,10 @@ class _AddArticleState extends State<AddArticle> {
                         isDescPrivate = val;
                       });
                     },
+                    activeColor: Colors.white,
+                    activeTrackColor: Colors.grey[500],
+                    inactiveThumbColor: Colors.lightBlue,
+                    inactiveTrackColor: Colors.blue[100],
                   ),
                 ],
               ),
@@ -172,12 +182,17 @@ class _AddArticleState extends State<AddArticle> {
                     text: "Enter tool nessesary (seperated by ,)",
                   ),
                   Switch(
-                      value: isToolsPrivate,
-                      onChanged: (bool val) {
-                        setState(() {
-                          isToolsPrivate = val;
-                        });
-                      }),
+                    value: isToolsPrivate,
+                    onChanged: (bool val) {
+                      setState(() {
+                        isToolsPrivate = val;
+                      });
+                    },
+                    activeColor: Colors.white,
+                    activeTrackColor: Colors.grey[500],
+                    inactiveThumbColor: Colors.lightBlue,
+                    inactiveTrackColor: Colors.blue[100],
+                  ),
                 ],
               ),
             ),
@@ -191,74 +206,111 @@ class _AddArticleState extends State<AddArticle> {
                     text: "Enter steps to complete",
                   ),
                   Switch(
-                      value: isStepsPrivate,
-                      onChanged: (bool val) {
-                        setState(() {
-                          isStepsPrivate = val;
-                        });
-                      }),
+                    value: isStepsPrivate,
+                    onChanged: (bool val) {
+                      setState(() {
+                        isStepsPrivate = val;
+                      });
+                    },
+                    activeColor: Colors.white,
+                    activeTrackColor: Colors.grey[500],
+                    inactiveThumbColor: Colors.lightBlue,
+                    inactiveTrackColor: Colors.blue[100],
+                  ),
                 ],
               ),
             ),
-            DropdownButton(
-              value: selectedDifficulty,
-              items:
-                  dropDownItems.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? val) {
-                setState(() => selectedDifficulty = val!);
-              },
-            ),
+            Container(
+                decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadius.circular(10)),
+                child: DropdownButton(
+                  dropdownColor: Colors.black,
+                  borderRadius: BorderRadius.circular(20),
+                  style: const TextStyle(color: Colors.white),
+                  value: selectedDifficulty,
+                  items: dropDownItems
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Center(
+                          child: Text(value,
+                              style: const TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center)),
+                    );
+                  }).toList(),
+                  onChanged: (String? val) {
+                    setState(() => selectedDifficulty = val!);
+                  },
+                )),
             OutlinedButton(
               onPressed: () => imagePicker(),
+              style: OutlinedButton.styleFrom(
+                  primary: Colors.white,
+                  backgroundColor: Colors.grey[700],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  )),
               child: const Icon(
                 Icons.image,
-                color: Colors.blueGrey,
+                color: Colors.blue,
                 size: 24.0,
                 semanticLabel: 'Select images for your article',
               ),
             ),
-            Tags(
-              // runSpacing: 1,
-              // horizontalScroll: true,
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: Tags(
+                  // runSpacing: 1,
+                  // horizontalScroll: true,
 
-              // symmetry: true,
-              itemCount: tags.length,
-              itemBuilder: (int index) {
-                final item = tags[index];
-                return ItemTags(
-                  key: Key(index.toString()),
-                  index: index,
-                  title: item,
-                  removeButton: ItemTagsRemoveButton(onRemoved: () {
-                    setState(() => tags.removeAt(index));
-                    return true;
-                  }),
-                );
-              },
-              textField: TagsTextField(
-                width: 400,
-                inputDecoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      bottomLeft: Radius.circular(25),
-                      topRight: Radius.circular(25),
-                      bottomRight: Radius.circular(25),
+                  // symmetry: true,
+                  itemCount: tags.length,
+                  itemBuilder: (int index) {
+                    final item = tags[index];
+                    return ItemTags(
+                      key: Key(index.toString()),
+                      index: index,
+                      title: item,
+                      removeButton: ItemTagsRemoveButton(onRemoved: () {
+                        setState(() => tags.removeAt(index));
+                        return true;
+                      }),
+                    );
+                  },
+                  textField: TagsTextField(
+                    textStyle:
+                        const TextStyle(fontSize: 14, color: Colors.white),
+                    width: 400,
+                    inputDecoration: const InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          bottomLeft: Radius.circular(25),
+                          topRight: Radius.circular(25),
+                          bottomRight: Radius.circular(25),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          bottomLeft: Radius.circular(25),
+                          topRight: Radius.circular(25),
+                          bottomRight: Radius.circular(25),
+                        ),
+                      ),
                     ),
+                    hintText: "Enter article's tags",
+                    hintTextColor: Colors.white,
+                    onSubmitted: (String? str) {
+                      setState(() => tags.add(str!));
+                    },
                   ),
-                ),
-                hintText: "Enter article's tags",
-                onSubmitted: (String? str) {
-                  setState(() => tags.add(str!));
-                },
-              ),
-            ),
+                )),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.grey[700]),
               onPressed: () => createArticle(),
               child: const Text("Create Article"),
             ),
@@ -285,11 +337,23 @@ class TextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: TextField(
+        style: const TextStyle(color: Colors.white),
         maxLines: isTextArea ? 5 : 1,
         controller: controller,
         decoration: InputDecoration(
           hintText: text,
-          border: const OutlineInputBorder(
+          hintStyle: const TextStyle(color: Colors.white70),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25),
+              bottomLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+              bottomRight: Radius.circular(25),
+            ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               bottomLeft: Radius.circular(25),

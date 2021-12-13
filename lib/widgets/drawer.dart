@@ -1,3 +1,5 @@
+import 'package:diy/main.dart';
+import 'package:diy/screens/add_article.dart';
 import 'package:diy/screens/home_screen.dart';
 import 'package:diy/screens/search_page.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +48,24 @@ class AppDrawer extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           }),
+      ListTile(
+          leading: const Icon(Icons.alternate_email_outlined),
+          title: const Text('Onboarding'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            );
+          }),
+      ListTile(
+          leading: const Icon(Icons.add_circle_outline),
+          title: const Text('Add Article'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddArticle()),
+            );
+          })
     ]));
   }
 }
@@ -62,7 +82,7 @@ Widget _createHeader() {
         Positioned(
             bottom: 4.0,
             left: 16.0,
-            child: Text("Do It Youself!",
+            child: Text("Repair. Journal. Share.",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 25.0,

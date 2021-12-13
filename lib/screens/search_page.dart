@@ -53,7 +53,9 @@ class SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
+        backgroundColor: Colors.grey[850],
         title: const Text('Search Page'),
       ),
       body: Column(
@@ -61,15 +63,20 @@ class SearchPageState extends State<SearchPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              style: const TextStyle(color: Colors.white),
               onChanged: (value) {
                 filterSearchResults(value);
               },
               controller: editingController,
               decoration: const InputDecoration(
                   labelText: "Search for DIY Articles",
+                  labelStyle: TextStyle(color: Colors.white),
                   hintText: "Search",
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
+                  fillColor: Color.fromRGBO(200, 200, 200, 0),
+                  hintStyle: TextStyle(color: Colors.white),
+                  prefixIcon: Icon(Icons.search, color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.all(Radius.circular(25.0)))),
             ),
           ),
@@ -81,8 +88,12 @@ class SearchPageState extends State<SearchPage> {
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   height: 50,
-                  color: Colors.blue[100],
-                  child: Center(child: Text('Entry ${items[index]}')),
+                  color: Colors.grey[900],
+                  child: Center(
+                      child: Text(
+                    'Entry ${items[index]}',
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                  )),
                 );
               },
             ),
