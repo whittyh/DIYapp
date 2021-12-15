@@ -370,7 +370,7 @@ class _EditArticleState extends State<EditArticle> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(primary: Colors.grey[700]),
               onPressed: () => createArticle(),
-              child: const Text("Create Article"),
+              child: const Text("Update Article"),
             ),
           ],
         ),
