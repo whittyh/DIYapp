@@ -44,7 +44,6 @@ class _EditArticleState extends State<EditArticle> {
   @override
   void initState() {
     super.initState();
-    print("hello from edit");
     var article = widget.article;
     nameController.text = article.name;
     descController.text = article.description!;
@@ -64,7 +63,6 @@ class _EditArticleState extends State<EditArticle> {
   Widget build(BuildContext context) {
     void createArticle() async {
       if (nameController.text.isNotEmpty) {
-        print("Article is being created");
         var privateFields = {
           'description': isDescPrivate,
           'tools': isToolsPrivate,
@@ -79,7 +77,8 @@ class _EditArticleState extends State<EditArticle> {
             : stepsController.text.split(",").map((s) => s.trim()).toList();
         Article article = Article(
             name: nameController.text,
-            description: descController.text,
+            description:
+                descController.text.isNotEmpty ? descController.text : "",
             tools: tools,
             steps: steps,
             images: images,
@@ -104,7 +103,6 @@ class _EditArticleState extends State<EditArticle> {
 
         var success =
             await atClientManager.atClient.put(atKey, json.encode(articleJson));
-        success ? print("Yay") : print("Boo!");
         if (success) {
           Navigator.push(
             context,

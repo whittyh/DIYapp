@@ -1,14 +1,12 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:diy/constant.dart';
 import 'package:diy/widgets/article_card.dart';
-
 import '../models/profilepic.dart';
 import 'package:flutter/material.dart';
 import 'package:diy/models/article.dart';
-import 'package:diy/screens/view_article.dart';
-import 'package:diy/screens/add_article.dart';
 import 'package:diy/widgets/drawer.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
@@ -49,9 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ..namespace = NAMESPACE
       ..sharedWith = atSign;
 
-    var success =
-        await atClientManager.atClient.put(atKey, json.encode(picJson));
-    success ? print("Yay") : print("Boo!");
+    await atClientManager.atClient.put(atKey, json.encode(picJson));
   }
 
   Future imagePicker() async {
@@ -106,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white),
               )),
           FutureBuilder(
-            future: scanYourArticles(),
+            future: scanNamespaceArticles(),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.hasData && snapshot.data.isNotEmpty) {
                 List<Map<String, dynamic>> results = snapshot.data;
@@ -114,8 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView.builder(
                     itemCount: results.length,
                     itemBuilder: (BuildContext context, int index) {
-                      // print(results);
-
                       var articlejson =
                           json.decode(results[index].values.elementAt(0));
                       var article = Article.fromJson(articlejson);
@@ -168,8 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
       String? keyStr = key.key;
       String val = await lookup(key);
       values.add({keyStr!: val});
-      // var isDeleted = await atClientManager.atClient.delete(key);
-      // isDeleted ? print("Deleted") : print("Not Deleted");
     }
 
     return values;
