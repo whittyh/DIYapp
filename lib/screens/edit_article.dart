@@ -36,7 +36,7 @@ class _EditArticleState extends State<EditArticle> {
   TextEditingController toolsController = TextEditingController();
   TextEditingController stepsController = TextEditingController();
   TextEditingController tagsController = TextEditingController();
-  String selectedDifficulty = "";
+  String? selectedDifficulty;
   File? articleImage;
   List? images;
   List<String> tags = [];
@@ -50,8 +50,7 @@ class _EditArticleState extends State<EditArticle> {
     descController.text = article.description!;
     toolsController.text = article.tools!.join(",");
     stepsController.text = article.steps!.join(",");
-    var selectedDifficulty =
-        article.difficulty != null ? article.description : "";
+    selectedDifficulty = article.difficulty != null ? article.difficulty! : "";
     tags = article.tags!.map((t) => t.toString()).toList();
     images = article.images;
     // var datePosted = article.datePosted;
@@ -63,26 +62,6 @@ class _EditArticleState extends State<EditArticle> {
 
   @override
   Widget build(BuildContext context) {
-    // var article = widget.article;
-    // TextEditingController nameController = TextEditingController();
-    // TextEditingController descController = TextEditingController();
-    // TextEditingController toolsController = TextEditingController();
-    // TextEditingController stepsController = TextEditingController();
-    // TextEditingController tagsController = TextEditingController();
-    // nameController.text = article.name;
-    // descController.text = article.description!;
-    // toolsController.text = article.tools!.join(",");
-    // stepsController.text = article.steps!.join(",");
-    // var selectedDifficulty =
-    //     article.difficulty != null ? article.description : "";
-    // var tags = article.tags!.map((t) => t.toString()).toList();
-    // var images = article.images;
-    // var datePosted = article.datePosted;
-    // var isArticlePrivate = article.isPrivate;
-    // var isDescPrivate = article.privateFields!['description'];
-    // var isToolsPrivate = article.privateFields!['tools'];
-    // var isStepsPrivate = article.privateFields!['steps'];
-
     void createArticle() async {
       if (nameController.text.isNotEmpty) {
         print("Article is being created");
