@@ -49,15 +49,6 @@ class SearchPageState extends State<SearchPage> {
         title: const Text('Search Page'),
       ),
       body: Column(children: [
-        ElevatedButton(
-          onPressed: () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddArticle()),
-            )
-          },
-          child: Text("add"),
-        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
