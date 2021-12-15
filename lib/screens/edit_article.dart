@@ -15,15 +15,17 @@ import 'package:diy/constant.dart';
 import '../models/article.dart';
 import 'home_screen.dart';
 
-class AddArticle extends StatefulWidget {
-  const AddArticle({Key? key}) : super(key: key);
+class EditArticle extends StatefulWidget {
+  const EditArticle({Key? key, required this.article}) : super(key: key);
+  final Article article;
 
   @override
-  State<AddArticle> createState() => _AddArticleState();
+  State<EditArticle> createState() => _EditArticleState();
 }
 
-class _AddArticleState extends State<AddArticle> {
+class _EditArticleState extends State<EditArticle> {
   var atClientManager = AtClientManager.getInstance();
+  var dropDownItems = ["", "Easy", "Medium", "Hard"];
   bool isArticlePrivate = false;
   bool isDescPrivate = false;
   bool isToolsPrivate = false;
@@ -34,96 +36,137 @@ class _AddArticleState extends State<AddArticle> {
   TextEditingController toolsController = TextEditingController();
   TextEditingController stepsController = TextEditingController();
   TextEditingController tagsController = TextEditingController();
-  var dropDownItems = ["", "Easy", "Medium", "Hard"];
   String selectedDifficulty = "";
   File? articleImage;
   List? images;
   List<String> tags = [];
 
-  void createArticle() async {
-    if (nameController.text.isNotEmpty) {
-      print("Article is being created");
-      var privateFields = {
-        'description': isDescPrivate,
-        'tools': isToolsPrivate,
-        'steps': isStepsPrivate,
-        // 'difficulty': isDifficultyPrivate
-      };
-      List<String> tools = toolsController.text == ""
-          ? []
-          : toolsController.text.split(",").map((s) => s.trim()).toList();
-      List<String> steps = stepsController.text == ""
-          ? []
-          : stepsController.text.split(",").map((s) => s.trim()).toList();
-      Article article = Article(
-          name: nameController.text,
-          description: descController.text,
-          tools: tools,
-          steps: steps,
-          images: images,
-          tags: tags,
-          // datePosted: DateTime.now(),
-          difficulty: selectedDifficulty == "" ? null : selectedDifficulty,
-          isPrivate: isArticlePrivate,
-          privateFields: privateFields);
-
-      Map articleJson = article.toJson();
-
-      String? atSign =
-          AtClientManager.getInstance().atClient.getCurrentAtSign();
-
-      var metaData = Metadata()..isPublic = true;
-
-      var atKey = AtKey()
-        ..key = nameController.text
-        //..metadata = metaData
-        ..namespace = NAMESPACE
-        ..sharedWith = atSign;
-
-      var success =
-          await atClientManager.atClient.put(atKey, json.encode(articleJson));
-      success ? print("Yay") : print("Boo!");
-      if (success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      }
-    } else {
-      final snackBar = SnackBar(
-        content: const Text(
-          'Article Name field is empty',
-          style: TextStyle(color: Colors.redAccent),
-        ),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {},
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
-
-  Future imagePicker() async {
-    final allImages = await ImagePicker().pickMultiImage();
-    try {
-      if (allImages == null) return;
-      final imagesTemp = allImages
-          .map((img) => base64Encode(File(img.path).readAsBytesSync()))
-          .toList();
-      setState(() => images = imagesTemp);
-    } catch (e) {
-      print(e);
-    }
+  @override
+  void initState() {
+    super.initState();
+    print("hello from edit");
+    var article = widget.article;
+    nameController.text = article.name;
+    descController.text = article.description!;
+    toolsController.text = article.tools!.join(",");
+    stepsController.text = article.steps!.join(",");
+    var selectedDifficulty =
+        article.difficulty != null ? article.description : "";
+    tags = article.tags!.map((t) => t.toString()).toList();
+    images = article.images;
+    // var datePosted = article.datePosted;
+    isArticlePrivate = article.isPrivate;
+    isDescPrivate = article.privateFields!['description'];
+    isToolsPrivate = article.privateFields!['tools'];
+    isStepsPrivate = article.privateFields!['steps'];
   }
 
   @override
   Widget build(BuildContext context) {
+    // var article = widget.article;
+    // TextEditingController nameController = TextEditingController();
+    // TextEditingController descController = TextEditingController();
+    // TextEditingController toolsController = TextEditingController();
+    // TextEditingController stepsController = TextEditingController();
+    // TextEditingController tagsController = TextEditingController();
+    // nameController.text = article.name;
+    // descController.text = article.description!;
+    // toolsController.text = article.tools!.join(",");
+    // stepsController.text = article.steps!.join(",");
+    // var selectedDifficulty =
+    //     article.difficulty != null ? article.description : "";
+    // var tags = article.tags!.map((t) => t.toString()).toList();
+    // var images = article.images;
+    // var datePosted = article.datePosted;
+    // var isArticlePrivate = article.isPrivate;
+    // var isDescPrivate = article.privateFields!['description'];
+    // var isToolsPrivate = article.privateFields!['tools'];
+    // var isStepsPrivate = article.privateFields!['steps'];
+
+    void createArticle() async {
+      if (nameController.text.isNotEmpty) {
+        print("Article is being created");
+        var privateFields = {
+          'description': isDescPrivate,
+          'tools': isToolsPrivate,
+          'steps': isStepsPrivate,
+          // 'difficulty': isDifficultyPrivate
+        };
+        List<String> tools = toolsController.text == ""
+            ? []
+            : toolsController.text.split(",").map((s) => s.trim()).toList();
+        List<String> steps = stepsController.text == ""
+            ? []
+            : stepsController.text.split(",").map((s) => s.trim()).toList();
+        Article article = Article(
+            name: nameController.text,
+            description: descController.text,
+            tools: tools,
+            steps: steps,
+            images: images,
+            tags: tags,
+            // datePosted: DateTime.now(),
+            difficulty: selectedDifficulty == "" ? null : selectedDifficulty,
+            isPrivate: isArticlePrivate,
+            privateFields: privateFields);
+
+        Map articleJson = article.toJson();
+
+        String? atSign =
+            AtClientManager.getInstance().atClient.getCurrentAtSign();
+
+        var metaData = Metadata()..isPublic = true;
+
+        var atKey = AtKey()
+          ..key = nameController.text
+          //..metadata = metaData
+          ..namespace = NAMESPACE
+          ..sharedWith = atSign;
+
+        var success =
+            await atClientManager.atClient.put(atKey, json.encode(articleJson));
+        success ? print("Yay") : print("Boo!");
+        if (success) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      } else {
+        final snackBar = SnackBar(
+          content: const Text(
+            'Article Name field is empty',
+            style: TextStyle(color: Colors.redAccent),
+          ),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {},
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+
+    Future imagePicker() async {
+      final allImages = await ImagePicker().pickMultiImage();
+      try {
+        if (allImages == null) return;
+        final imagesTemp = allImages
+            .map((img) => base64Encode(File(img.path).readAsBytesSync()))
+            .toList();
+        setState(() => images = imagesTemp);
+      } catch (e) {
+        print('error');
+        print(e);
+      }
+    }
+
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('Add Article'),
+        title: Text('Editing ${widget.article.name}'),
+        centerTitle: true,
         actions: [
           Switch(
             value: isArticlePrivate,
@@ -235,28 +278,29 @@ class _AddArticleState extends State<AddArticle> {
               ),
             ),
             Container(
-                decoration: BoxDecoration(
-                    color: Colors.grey[700],
-                    borderRadius: BorderRadius.circular(10)),
-                child: DropdownButton(
-                  dropdownColor: Colors.black,
-                  borderRadius: BorderRadius.circular(20),
-                  style: const TextStyle(color: Colors.white),
-                  value: selectedDifficulty,
-                  items: dropDownItems
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Center(
-                          child: Text(value,
-                              style: const TextStyle(color: Colors.white),
-                              textAlign: TextAlign.center)),
-                    );
-                  }).toList(),
-                  onChanged: (String? val) {
-                    setState(() => selectedDifficulty = val!);
-                  },
-                )),
+              decoration: BoxDecoration(
+                  color: Colors.grey[700],
+                  borderRadius: BorderRadius.circular(10)),
+              child: DropdownButton(
+                dropdownColor: Colors.black,
+                borderRadius: BorderRadius.circular(20),
+                style: const TextStyle(color: Colors.white),
+                value: selectedDifficulty,
+                items:
+                    dropDownItems.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Center(
+                        child: Text(value,
+                            style: const TextStyle(color: Colors.white),
+                            textAlign: TextAlign.center)),
+                  );
+                }).toList(),
+                onChanged: (String? val) {
+                  setState(() => selectedDifficulty = val!);
+                },
+              ),
+            ),
             OutlinedButton(
               onPressed: () => imagePicker(),
               style: OutlinedButton.styleFrom(

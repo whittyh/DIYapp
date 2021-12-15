@@ -45,10 +45,10 @@ class _MyAppState extends State<MyApp> {
     print(AtEnv.appNamespace);
     return MaterialApp(
       // * The onboarding screen (first screen)
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           scaffoldBackgroundColor: const Color(0x00000000),
           primaryColor: Colors.lightBlue[800]),
-      routes: {'/add-guide': (context) => const AddArticle()},
       home: Scaffold(
           body: SingleChildScrollView(
         child: Builder(

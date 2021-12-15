@@ -21,52 +21,52 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: ListView(padding: EdgeInsets.zero, children: [
-      _createHeader(),
-      // const DrawerHeader(
-      //   decoration: BoxDecoration(
-      //     color: Colors.purple,
-      //   ),
-      //   child: Text('Drawer Header'),
-      // ),
-      ListTile(
-        leading: const Icon(Icons.search),
-        title: const Text('Search DIY Journals'),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SearchPage()),
-          );
-        },
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          _createHeader(),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Homepage'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.search),
+            title: const Text('Search DIY Journals'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_circle_outline),
+            title: const Text('Add Article'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AddArticle()),
+              );
+            },
+          ),
+          ListTile(
+              leading: const Icon(Icons.alternate_email_outlined),
+              title: const Text('Onboarding'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyApp()),
+                );
+              }),
+        ],
       ),
-      ListTile(
-          leading: const Icon(Icons.home),
-          title: const Text('Homepage'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          }),
-      ListTile(
-          leading: const Icon(Icons.alternate_email_outlined),
-          title: const Text('Onboarding'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyApp()),
-            );
-          }),
-      ListTile(
-          leading: const Icon(Icons.add_circle_outline),
-          title: const Text('Add Article'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddArticle()),
-            );
-          })
-    ]));
+    );
   }
 }
 

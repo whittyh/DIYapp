@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:diy/models/article.dart';
 import 'package:flutter/material.dart';
 
+import 'edit_article.dart';
+
 class ViewArticle extends StatelessWidget {
   const ViewArticle({Key? key, required this.article}) : super(key: key);
   final Article article;
@@ -13,6 +15,21 @@ class ViewArticle extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: Text(article.name),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditArticle(
+                    article: article,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

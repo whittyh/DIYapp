@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:diy/constant.dart';
+import 'package:diy/widgets/article_card.dart';
 
 import '../models/profilepic.dart';
 import 'package:flutter/material.dart';
@@ -48,9 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ..namespace = NAMESPACE
       ..sharedWith = atSign;
 
-    var success = await atClientManager.atClient
-        .put(atKey, json.encode(picJson), isDedicated: true);
-    // await atClientManager.atClient.putMeta(atKey);
+    var success =
+        await atClientManager.atClient.put(atKey, json.encode(picJson));
     success ? print("Yay") : print("Boo!");
   }
 
@@ -108,70 +108,26 @@ class _HomeScreenState extends State<HomeScreen> {
           FutureBuilder(
             future: scanYourArticles(),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData && snapshot.data.isNotEmpty) {
                 List<Map<String, dynamic>> results = snapshot.data;
                 return Expanded(
                   child: ListView.builder(
                     itemCount: results.length,
                     itemBuilder: (BuildContext context, int index) {
-                      print(results);
-                      // Article article = Article(
-                      //     name: "Testing", isPrivate: false, privateFields: {});
+                      // print(results);
+
                       var articlejson =
                           json.decode(results[index].values.elementAt(0));
                       var article = Article.fromJson(articlejson);
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                            onTap: () => {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ViewArticle(
-                                        article: article,
-                                      ),
-                                    ),
-                                  ),
-                                },
-                            child: Card(
-                                elevation: 0,
-                                color: Colors.grey[850],
-                                child: Column(children: [
-                                  Text(article.name,
-                                      textAlign: TextAlign.center,
-                                      style: (const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 26,
-                                          height: 1.5))),
-                                  Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(article.description!,
-                                          style: const TextStyle(
-                                              color: Colors.white))),
-                                  (article.difficulty != null
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 8.0),
-                                          child: RichText(
-                                              text:
-                                                  TextSpan(children: <TextSpan>[
-                                            const TextSpan(
-                                                text: "Difficulty: ",
-                                                style: TextStyle(
-                                                    color: Colors.white)),
-                                            TextSpan(
-                                                text: article.difficulty!,
-                                                style: const TextStyle(
-                                                    color: Colors.white))
-                                          ])))
-                                      : Container()),
-                                ]))),
-                      );
+                      return ArticleCard(article: article);
                     },
                   ),
                 );
               }
-              return const Text("HAS NO DATA");
+              return const Text(
+                "Please add an Article",
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              );
             },
           ),
         ],
