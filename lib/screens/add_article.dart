@@ -49,7 +49,6 @@ class _AddArticleState extends State<AddArticle> {
     // All fields are optional except the Article name field. If that field is empty
     // Then a SnackBar widget will appear at the bottom, notifying user to fill in the field.
     if (nameController.text.isNotEmpty) {
-      print("Article is being created");
       var privateFields = {
         'description': isDescPrivate,
         'tools': isToolsPrivate,
@@ -86,7 +85,6 @@ class _AddArticleState extends State<AddArticle> {
 
       var success =
           await atClientManager.atClient.put(atKey, json.encode(articleJson));
-      success ? print("Yay") : print("Boo!");
       if (success) {
         Navigator.push(
           context,

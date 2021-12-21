@@ -76,7 +76,6 @@ class _EditArticleState extends State<EditArticle> {
       // All fields are optional except the Article name field. If that field is empty
       // Then a SnackBar widget will appear at the bottom, notifying user to fill in the field.
       if (nameController.text.isNotEmpty) {
-        print("Article is being created");
         var privateFields = {
           'description': isDescPrivate,
           'tools': isToolsPrivate,
@@ -90,7 +89,8 @@ class _EditArticleState extends State<EditArticle> {
             : stepsController.text.split(",").map((s) => s.trim()).toList();
         Article article = Article(
             name: nameController.text,
-            description: descController.text,
+            description:
+                descController.text.isNotEmpty ? descController.text : "",
             tools: tools,
             steps: steps,
             images: images,

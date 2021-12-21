@@ -47,61 +47,69 @@ class _MyAppState extends State<MyApp> {
       // * The onboarding screen (first screen)
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          scaffoldBackgroundColor: const Color(0x00000000),
+          scaffoldBackgroundColor: Colors.black,
           primaryColor: Colors.lightBlue[800]),
       home: Scaffold(
-          body: SingleChildScrollView(
-        child: Builder(
-          builder: (context) => Center(
+        body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                  "https://cdn.wallpapersafari.com/83/71/Ht2RxY.jpg"),
+            ),
+          ),
+          child: Builder(
+            builder: (context) => Center(
               child: Column(
-            children: [
-              const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 40, 0, 25),
-                  child: Text("@DIY\nJournal. Repair. Share.",
-                      style: TextStyle(
-                          fontSize: 26, color: Colors.white, height: 1.4),
-                      textAlign: TextAlign.center)),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.grey[850]),
-                onPressed: () async {
-                  var preference = await futurePreference;
-                  setState(() {
-                    atClientPreference = preference;
-                  });
-                  Onboarding(
-                    context: context,
-                    atClientPreference: atClientPreference!,
-                    domain: AtEnv.rootDomain,
-                    rootEnvironment: AtEnv.rootEnvironment,
-                    appAPIKey: AtEnv.appApiKey,
-                    onboard: (value, atsign) {
-                      _logger.finer('Successfully onboarded $atsign');
+                children: [
+                  const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 40, 0, 25),
+                      child: Text("@DIY\nJournal. Repair. Share.",
+                          style: TextStyle(
+                              fontSize: 26, color: Colors.white, height: 1.4),
+                          textAlign: TextAlign.center)),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.grey[850]),
+                    onPressed: () async {
+                      var preference = await futurePreference;
+                      setState(() {
+                        atClientPreference = preference;
+                      });
+                      Onboarding(
+                        context: context,
+                        atClientPreference: atClientPreference!,
+                        domain: AtEnv.rootDomain,
+                        rootEnvironment: AtEnv.rootEnvironment,
+                        appAPIKey: AtEnv.appApiKey,
+                        onboard: (value, atsign) {
+                          _logger.finer('Successfully onboarded $atsign');
+                        },
+                        onError: (error) {
+                          _logger.severe('Onboarding throws $error error');
+                        },
+                        // When users has successfully connected their @sign, they are navigated to the HomeScreen
+                        nextScreen: const HomeScreen(),
+                      );
                     },
-                    onError: (error) {
-                      _logger.severe('Onboarding throws $error error');
-                    },
-                    // When users has successfully connected their @sign, they are navigated to the HomeScreen
-                    nextScreen: const HomeScreen(),
-                  );
-                },
-                child: const Text('Onboard an @sign',
-                    style: TextStyle(color: Colors.white)),
+                    child: const Text('Onboard an @sign',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  const Spacer(),
+                  const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                        "CS410 MVP completed by:\nWhitney Hamnett, Katherine Elia, and Daniel Goncalves",
+                        style: TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center),
+                  )
+                ],
               ),
-              Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Image.network(
-                      "https://cdn.wallpapersafari.com/83/71/Ht2RxY.jpg")),
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text(
-                    "cs410 MVP completed by:\nWhitney Hamnett, Katherine Elia, and Daniel Goncalves",
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center),
-              )
-            ],
-          )),
+            ),
+          ),
         ),
-      )),
+      ),
     );
   }
 }

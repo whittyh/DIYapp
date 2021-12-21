@@ -1,14 +1,12 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:diy/constant.dart';
 import 'package:diy/widgets/article_card.dart';
-
 import '../models/profilepic.dart';
 import 'package:flutter/material.dart';
 import 'package:diy/models/article.dart';
-import 'package:diy/screens/view_article.dart';
-import 'package:diy/screens/add_article.dart';
 import 'package:diy/widgets/drawer.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
@@ -24,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // These are globals variables declared/initialized that are needed for the homescreen
   var atClientManager = AtClientManager.getInstance();
   String? atSign = AtClientManager.getInstance().atClient.getCurrentAtSign();
-  Future? yourArticles;
   bool isPicPrivate = false;
   File? articleImage;
   List? images;
@@ -44,9 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ..namespace = NAMESPACE
       ..sharedWith = atSign;
 
-    var success =
-        await atClientManager.atClient.put(atKey, json.encode(picJson));
-    success ? print("Yay") : print("Boo!");
+    await atClientManager.atClient.put(atKey, json.encode(picJson));
   }
 
   /*
@@ -117,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
           secondary server (AtSign). 
           */
           FutureBuilder(
-            future: scanYourArticles(),
+            future: scanNamespaceArticles(),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               // Check whether user has saved articles in their AtSigns
               if (snapshot.hasData && snapshot.data.isNotEmpty) {
@@ -170,6 +165,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // This function will retrieve the value of an AtKey. The AtKey is passed as an arguement.
+  Future<List<Map<String, dynamic>>> scanNamespaceArticles() async {
+    var atClientManager = AtClientManager.getInstance();
+    String myRegex = '^(?!public).*compactredpanda.*';
+    List<AtKey> response =
+        await atClientManager.atClient.getAtKeys(regex: myRegex);
+
+    List<Map<String, dynamic>> values = [];
+
+    for (AtKey key in response) {
+      String? keyStr = key.key;
+      String val = await lookup(key);
+      values.add({keyStr!: val});
+    }
+
+    return values;
+  }
+
   Future<dynamic> lookup(AtKey? atKey) async {
     AtClient client = atClientManager.atClient;
     if (atKey != null) {
