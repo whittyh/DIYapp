@@ -80,6 +80,7 @@ class _MyAppState extends State<MyApp> {
                     onError: (error) {
                       _logger.severe('Onboarding throws $error error');
                     },
+                    // When users has successfully connected their @sign, they are navigated to the HomeScreen
                     nextScreen: const HomeScreen(),
                   );
                 },

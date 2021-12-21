@@ -24,6 +24,7 @@ class EditArticle extends StatefulWidget {
 }
 
 class _EditArticleState extends State<EditArticle> {
+  // This is globals variables declared/initialized used throght this screen
   var atClientManager = AtClientManager.getInstance();
   var dropDownItems = ["", "Easy", "Medium", "Hard"];
   bool isArticlePrivate = false;
@@ -41,11 +42,17 @@ class _EditArticleState extends State<EditArticle> {
   List? images;
   List<String> tags = [];
 
+  // This is called once at the beginning of the search screen
   @override
   void initState() {
     super.initState();
-    print("hello from edit");
     var article = widget.article;
+    /* 
+      This screen is only accessable through the view article screen. 
+      The edit article screen is required to recieve as argument the Article object.
+      In the InitState function, I autofill all the fields that were previous filled when the 
+      user created the article.
+    */
     nameController.text = article.name;
     descController.text = article.description!;
     toolsController.text = article.tools!.join(",");
@@ -53,7 +60,6 @@ class _EditArticleState extends State<EditArticle> {
     selectedDifficulty = article.difficulty != null ? article.difficulty! : "";
     tags = article.tags!.map((t) => t.toString()).toList();
     images = article.images;
-    // var datePosted = article.datePosted;
     isArticlePrivate = article.isPrivate;
     isDescPrivate = article.privateFields!['description'];
     isToolsPrivate = article.privateFields!['tools'];
@@ -62,14 +68,19 @@ class _EditArticleState extends State<EditArticle> {
 
   @override
   Widget build(BuildContext context) {
+    /*Once users has enter all information he/she wants stored, this function gathers all
+   the information and creates a Article object and converts it to json format. 
+   Then, json format is stored within the users AtSign
+   */
     void createArticle() async {
+      // All fields are optional except the Article name field. If that field is empty
+      // Then a SnackBar widget will appear at the bottom, notifying user to fill in the field.
       if (nameController.text.isNotEmpty) {
         print("Article is being created");
         var privateFields = {
           'description': isDescPrivate,
           'tools': isToolsPrivate,
           'steps': isStepsPrivate,
-          // 'difficulty': isDifficultyPrivate
         };
         List<String> tools = toolsController.text == ""
             ? []
@@ -84,7 +95,6 @@ class _EditArticleState extends State<EditArticle> {
             steps: steps,
             images: images,
             tags: tags,
-            // datePosted: DateTime.now(),
             difficulty: selectedDifficulty == "" ? null : selectedDifficulty,
             isPrivate: isArticlePrivate,
             privateFields: privateFields);
@@ -98,13 +108,12 @@ class _EditArticleState extends State<EditArticle> {
 
         var atKey = AtKey()
           ..key = nameController.text
-          //..metadata = metaData
           ..namespace = NAMESPACE
           ..sharedWith = atSign;
-
+        // Store the article in the secondary sever
         var success =
             await atClientManager.atClient.put(atKey, json.encode(articleJson));
-        success ? print("Yay") : print("Boo!");
+        // If the article was succesfully store then navigate back to the Home Screen
         if (success) {
           Navigator.push(
             context,
@@ -126,6 +135,11 @@ class _EditArticleState extends State<EditArticle> {
       }
     }
 
+    /*
+    The User has the option add pictures of their DIY project, 
+    this function allows the user to select a photo from their gallery and saves the photo
+    Post: Saves selected photo
+  */
     Future imagePicker() async {
       final allImages = await ImagePicker().pickMultiImage();
       try {
@@ -141,12 +155,15 @@ class _EditArticleState extends State<EditArticle> {
     }
 
     return Scaffold(
+      // Add a Drawer at the top left of the App Bar, this allows user with option to go back to HomePage or SearchPage
       drawer: const AppDrawer(),
+      // Creates an App Bar with following title, and background color of black.
       appBar: AppBar(
-        backgroundColor: Colors.black,
         title: Text('Editing ${widget.article.name}'),
+        backgroundColor: Colors.black,
         centerTitle: true,
         actions: [
+          // Add a Switch  where user can select if the entire article is public/private
           Switch(
             value: isArticlePrivate,
             onChanged: (bool val) {
@@ -161,6 +178,7 @@ class _EditArticleState extends State<EditArticle> {
           )
         ],
       ),
+      // Allows for the screen to be scrollable
       body: SingleChildScrollView(
           child: Container(
         color: Colors.grey[850],
@@ -173,6 +191,8 @@ class _EditArticleState extends State<EditArticle> {
                   style: TextStyle(color: Colors.white, fontSize: 15),
                   textAlign: TextAlign.center),
             ),
+            // Add Padding of 10 around and Creates TextField by calling the custom
+            // widget TextFieldWidget for the article name fiel
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
@@ -184,6 +204,11 @@ class _EditArticleState extends State<EditArticle> {
                 ],
               ),
             ),
+            /*
+                Adds Padding of 10 all around and Creates TextField by calling the custom
+                widget TextFieldWidget for the article description field. Adds a Switch 
+                where user has the option to make the description field public / private
+              */
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
@@ -208,6 +233,11 @@ class _EditArticleState extends State<EditArticle> {
                 ],
               ),
             ),
+            /*
+                Adds Padding of 10 all around and Creates TextField by calling the custom
+                widget TextFieldWidget for the article tools field. Adds a Switch 
+                where user has the option to make the tools field public / private
+            */
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
@@ -232,6 +262,11 @@ class _EditArticleState extends State<EditArticle> {
                 ],
               ),
             ),
+            /*
+                Adds Padding of 10 all around and Creates TextField by calling the custom
+                widget TextFieldWidget for the article steps field. Adds a Switch 
+                where user has the option to make the steps field public / private
+              */
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
@@ -256,6 +291,9 @@ class _EditArticleState extends State<EditArticle> {
                 ],
               ),
             ),
+            /*
+                Adds a drop down ment where user has the option of selecting the difficulty of the DIY project.
+              */
             Container(
               decoration: BoxDecoration(
                   color: Colors.grey[700],
@@ -280,6 +318,10 @@ class _EditArticleState extends State<EditArticle> {
                 },
               ),
             ),
+            /*
+                Creates a Button where when pressed, it calls the imagePicker function that allows 
+                user to select an image from gallary.
+            */
             OutlinedButton(
               onPressed: () => imagePicker(),
               style: OutlinedButton.styleFrom(
@@ -295,13 +337,13 @@ class _EditArticleState extends State<EditArticle> {
                 semanticLabel: 'Select images for your article',
               ),
             ),
+            /*
+                Using a third-party widget, this allows users to enter relevent tags about their Article. 
+                These tags can be used for the search functionally which would filter all articles with specific tag(s).
+              */
             Padding(
                 padding: const EdgeInsets.all(10),
                 child: Tags(
-                  // runSpacing: 1,
-                  // horizontalScroll: true,
-
-                  // symmetry: true,
                   itemCount: tags.length,
                   itemBuilder: (int index) {
                     final item = tags[index];
@@ -358,6 +400,9 @@ class _EditArticleState extends State<EditArticle> {
   }
 }
 
+/* This is a custom widget that Creates a TextField and applies the following styles to it
+   This widget is used various time.
+*/
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
     Key? key,
@@ -374,6 +419,7 @@ class TextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: TextField(
+        // Styles
         style: const TextStyle(color: Colors.white),
         maxLines: isTextArea ? 5 : 1,
         controller: controller,
@@ -382,6 +428,7 @@ class TextFieldWidget extends StatelessWidget {
           hintStyle: const TextStyle(color: Colors.white70),
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
+            // Makes all corners of the TextField circular
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               bottomLeft: Radius.circular(25),

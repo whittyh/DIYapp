@@ -1,15 +1,10 @@
 // ignore_for_file: unnecessary_const
+import 'dart:convert';
+import 'package:flutter/material.dart';
 
 import 'package:diy/widgets/article_card.dart';
 import 'package:diy/widgets/drawer.dart';
-import 'package:flutter/material.dart';
-import 'dart:convert';
-
-import 'package:diy/widgets/drawer.dart';
-import 'package:flutter/material.dart';
 import 'package:diy/models/article.dart';
-import 'package:diy/screens/view_article.dart';
-import 'package:diy/screens/add_article.dart';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
@@ -24,14 +19,20 @@ class SearchPage extends StatefulWidget {
 class SearchPageState extends State<SearchPage> {
   String? atSign = AtClientManager.getInstance().atClient.getCurrentAtSign();
   var atClientManager = AtClientManager.getInstance();
-
   TextEditingController editingController = TextEditingController();
   List<Map<String, dynamic>> allArticles = [];
   List<Map<String, dynamic>> filteredArticles = [];
 
+  // This is called once at the beginning of the search page
   @override
   void initState() {
     super.initState();
+    /* 
+      Calls the scanYourArticle function which returns a List of json objects 
+      for the articles store within the users AtSign. "then" is used to retreieve the json objects. 
+      It waits for the data is be fetched and once its done it initialized the allArticles and filteredArticles variables
+      with the articles within the AtSign.  
+    */
     scanYourArticles().then((articles) {
       setState(() {
         allArticles = articles;
@@ -43,12 +44,17 @@ class SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a Drawer at the top left of the App Bar, this allows user with option to go back to HomePage or SearchPage
       drawer: const AppDrawer(),
+      // Creates an App Bar with following title, and background color of black.
       appBar: AppBar(
-        backgroundColor: Colors.black,
         title: const Text('Search Page'),
+        backgroundColor: Colors.black,
       ),
       body: Column(children: [
+        /*  
+
+        */
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
@@ -68,19 +74,25 @@ class SearchPageState extends State<SearchPage> {
                   Radius.circular(20.0),
                 ),
               ),
-
-              //
             ),
           ),
         ),
         Expanded(
             child: filteredArticles.isEmpty
+                // If there is no article found after filter then display text to the screen
                 ? const Text(
                     'No results found.',
                   )
+                /*
+                  If there are articles found then, retrieve the list of articles and display them to the UI using
+                  the ArticleCard widget previous made.
+                */
                 : ListView.builder(
                     itemCount: filteredArticles.length,
                     itemBuilder: (BuildContext context, int index) {
+                      /*
+                        Data is recieved as a list of Json obejects, convert the indexed json object to a Article object
+                      */
                       var article = Article.fromJson(filteredArticles[index]);
                       return ArticleCard(article: article);
                     },
@@ -89,28 +101,30 @@ class SearchPageState extends State<SearchPage> {
     );
   }
 
-  // This function is called whenever the text field changes
+  // This function is called everytime the text field changes
   void _runFilter(String enteredKeyword) {
     List<Map<String, dynamic>> results;
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
       results = allArticles;
     } else {
+      // Filter for all articles using the name field
       results = allArticles.where((articles) {
-        // print(articles.values.first);
+        // we use the toLowerCase() method to make it case-insensitive
         return (articles["name"] as String)
             .toLowerCase()
             .contains(enteredKeyword.toLowerCase());
       }).toList();
-      // we use the toLowerCase() method to make it case-insensitive
     }
-
     // Refresh the UI
     setState(() {
       filteredArticles = results;
     });
   }
 
+  /*
+    This functions fetches data from the users AtSign and it is returned. This function is used in the FutureBuilder.
+  */
   Future<List<Map<String, dynamic>>> scanYourArticles() async {
     var atClientManager = AtClientManager.getInstance();
 
@@ -123,20 +137,19 @@ class SearchPageState extends State<SearchPage> {
       String? keyStr = key.key;
       if (keyStr != "signing_privatekey") {
         var val = await lookup(key);
-        print(val);
         if (val != null) {
           Map<String, dynamic> data = jsonDecode(val);
           values.add(data);
         }
-
-        // var isDeleted = await atClientManager.atClient.delete(key);
-        // isDeleted ? print("Deleted") : print("Not Deleted");
       }
     }
 
     return values;
   }
 
+  /*
+  This functions fetches data from the users AtSign and it is returned.
+  */
   Future<List<Map<String, dynamic>>> scanNamespaceArticles() async {
     var atClientManager = AtClientManager.getInstance();
     String myRegex = '^(?!public).*diy.*';
@@ -148,13 +161,11 @@ class SearchPageState extends State<SearchPage> {
       String? keyStr = key.key;
       String val = await lookup(key);
       values.add(jsonDecode(val));
-      // var isDeleted = await atClientManager.atClient.delete(key);
-      // isDeleted ? print("Deleted") : print("Not Deleted");
     }
-
     return values;
   }
 
+  // This function will retrieve the value of an AtKey. The AtKey is passed as an arguement.
   Future<dynamic> lookup(AtKey? atKey) async {
     AtClient client = atClientManager.atClient;
     if (atKey != null) {

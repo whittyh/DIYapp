@@ -21,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // These are globals variables declared/initialized that are needed for the homescreen
   var atClientManager = AtClientManager.getInstance();
   String? atSign = AtClientManager.getInstance().atClient.getCurrentAtSign();
   Future? yourArticles;
@@ -29,12 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List? images;
   Image img = Image.network(
       "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/8cc9595364efa0fc-org-1584048843.jpg?resize=980:*");
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   void createProfilePic() async {
     ProfilePic pic = ProfilePic(images: images, isPrivate: isPicPrivate);
     Map picJson = pic.toJson();
@@ -54,6 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
     success ? print("Yay") : print("Boo!");
   }
 
+  /*
+  The User has the option to change their profile picture, this function allows the user to select a photo from their gallery and saves the photo
+  Pre: None
+  Post: Saves selected photo
+  */
   Future imagePicker() async {
     final allImages = await ImagePicker().pickMultiImage();
     try {
@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(),
+      // Creates the App Bar with Journal as title and background color grey
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: const Center(child: Text('Journals             ')),
@@ -81,8 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
             width: MediaQuery.of(context).size.width,
             child: img,
           ),
+          // Creates a button, when press calls the imagesPicker function
           OutlinedButton(
-            onPressed: () => {createProfilePic(), imagePicker()},
+            onPressed: () => {imagePicker()},
             style: OutlinedButton.styleFrom(
                 primary: Colors.white,
                 backgroundColor: Colors.grey[700],
@@ -96,29 +98,39 @@ class _HomeScreenState extends State<HomeScreen> {
               semanticLabel: 'Select images for your Profile',
             ),
           ),
+          // Display to the screen the users @sign and adds padding of 30 at the bottom
           Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-              child: Text(
-                '${atClientManager.atClient.getCurrentAtSign()}',
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              )),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+            child: Text(
+              '${atClientManager.atClient.getCurrentAtSign()}',
+              style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+          ),
+          /*
+          FutureBuilder is a widget from the Flutter SDK which allows us to display asyncronous data. 
+          This widget requires the "future" parameter. It would be a function that makes API call or 
+          fetches data and returns within a Future data type. 
+          In our case, the scanYourArticles function fetches all the users article stored within their 
+          secondary server (AtSign). 
+          */
           FutureBuilder(
             future: scanYourArticles(),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              // Check whether user has saved articles in their AtSigns
               if (snapshot.hasData && snapshot.data.isNotEmpty) {
                 List<Map<String, dynamic>> results = snapshot.data;
                 return Expanded(
                   child: ListView.builder(
                     itemCount: results.length,
                     itemBuilder: (BuildContext context, int index) {
-                      // print(results);
-
                       var articlejson =
                           json.decode(results[index].values.elementAt(0));
+                      // Data is returned in json format, so I convert it back to an Article object.
                       var article = Article.fromJson(articlejson);
+                      // Each article passed to this Article Card Widget that creates the UI for the article passed.
                       return ArticleCard(article: article);
                     },
                   ),
@@ -135,6 +147,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /*
+  This functions fetches data from the users AtSign and it is returned. This function is used in the FutureBuilder.
+  */
   Future<List<Map<String, dynamic>>> scanYourArticles() async {
     var atClientManager = AtClientManager.getInstance();
 
@@ -148,33 +163,13 @@ class _HomeScreenState extends State<HomeScreen> {
       if (keyStr != "signing_privatekey") {
         var val = await lookup(key);
         if (val != null) values.add({keyStr!: val});
-        // var isDeleted = await atClientManager.atClient.delete(key);
-        // isDeleted ? print("Deleted") : print("Not Deleted");
       }
     }
 
     return values;
   }
 
-  Future<List<Map<String, dynamic>>> scanNamespaceArticles() async {
-    var atClientManager = AtClientManager.getInstance();
-    String myRegex = '^(?!public).*compactredpanda.*';
-    List<AtKey> response =
-        await atClientManager.atClient.getAtKeys(regex: myRegex);
-
-    List<Map<String, dynamic>> values = [];
-
-    for (AtKey key in response) {
-      String? keyStr = key.key;
-      String val = await lookup(key);
-      values.add({keyStr!: val});
-      // var isDeleted = await atClientManager.atClient.delete(key);
-      // isDeleted ? print("Deleted") : print("Not Deleted");
-    }
-
-    return values;
-  }
-
+  // This function will retrieve the value of an AtKey. The AtKey is passed as an arguement.
   Future<dynamic> lookup(AtKey? atKey) async {
     AtClient client = atClientManager.atClient;
     if (atKey != null) {
