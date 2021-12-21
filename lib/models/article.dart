@@ -1,5 +1,9 @@
 // ignore_for_file: constant_identifier_names
-
+/*
+  This is a class that represent that diffent fields an article can have
+  The only required parameters is the name, whether the article is private/puiblic, and 
+  a Map that specify which fields (e.g description, tools , etc) are private.
+*/
 class Article {
   String name;
   String? description;
@@ -24,6 +28,10 @@ class Article {
       required this.isPrivate,
       required this.privateFields});
 
+  /* 
+    This function convert the Article object to Json object.
+    This is nessesary when storing the article onto the users @asign.
+  */
   Map toJson() {
     return {
       'name': name,
@@ -39,6 +47,11 @@ class Article {
     };
   }
 
+  /* 
+    This function convert the Json object to an Article object.
+    This is useful when retrieving the article from the user's @sign.
+    It is required that a Map is passed as argument.
+  */
   factory Article.fromJson(Map<String, dynamic> map) {
     return Article(
         name: map['name'],
